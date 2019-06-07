@@ -11,7 +11,7 @@ Update OS and install packages
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo reboot
-sudo apt-get install -y git
+sudo apt-get install -y git omxplayer
 ```
 
 Enable SPI by running `sudo raspi-config` and under Interface Options select the SPI option to enable.
