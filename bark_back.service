@@ -1,0 +1,12 @@
+[Unit]
+Description=Bark Back Service
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/BarkBack
+ExecStart=/usr/bin/python3 bark_back.py
+
+[Install]
+WantedBy=multi-user.target
