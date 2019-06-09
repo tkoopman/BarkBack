@@ -35,6 +35,7 @@ SPI Channel on Raspberry Pi to used
 
 ### high_volume = 50
 This is used to calculated the number of barks detected over a period of time. 
+Valid values are 0 - 100.
 
 ### high_volume_period=5
 Number of seconds that high volume is tracked over
