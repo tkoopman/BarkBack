@@ -44,7 +44,7 @@ Now all you have to do is edit bark_back.cfg and add music files to ~/BarkBack/
 folder (or the folder you specify in the config file)
 
 ## Start on boot
-Run the following to start the program on boot
+Run the following to start the program on boot. You will need to edit the service file if you not using Python3.
 ```
 sudo cp /home/pi/BarkBack/bark_back.service /etc/systemd/system/
 sudo chmod 644 /etc/systemd/system/bark_back.service
