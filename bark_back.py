@@ -16,6 +16,7 @@ from collections import OrderedDict
 import configparser
 import logging
 from logging.handlers import SysLogHandler
+from syslog_rfc5424_formatter import RFC5424Formatter
 from monitor_mic import monitor
 from omxplayer import OMXPlayer
 import os.path
@@ -86,6 +87,7 @@ def InitLogger():
 
     if config['syslog'].getboolean('enabled'):
         syslog = SysLogHandler(address=(config['syslog']['host'], config['syslog'].getint('port')), facility=SysLogHandler.LOG_USER, socktype=socket.SOCK_DGRAM)
+        syslog.setFormatter(RFC5424Formatter(appname='BarkBack'))
         syslog.setLevel(config['syslog']['level'])
         logger.addHandler(syslog)
 
