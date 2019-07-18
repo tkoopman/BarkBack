@@ -27,7 +27,13 @@ import sys
 import time
 
 def main():
-    logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%Y-%m-%d %I:%M:%S %p', level='DEBUG', stream=sys.stdout)
+    global logger
+    logger = logging.getLogger("BarkBack")
+    logger.setLevel('DEBUG')
+    stdout = logging.StreamHandler(stream=sys.stdout)
+    stdout.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)s:%(message)s', datefmt='%Y-%m-%d %I:%M:%S %p'))
+    logger.addHandler(stdout)
+    
     ReadConfig()
     InitLogger()
     InitMQTTC()
@@ -59,7 +65,7 @@ def main():
     #    Poll MQTTC for subscribed topics
     while True:
         time.sleep(1)
-        logging.debug("barkback: volume=%d high_count=%d" %(mic.volume, mic.high_volume_count))
+        logger.debug("volume=%d high_count=%d" %(mic.volume, mic.high_volume_count), {'msgid': 'volume'})
         mqttc_publish(config['CloudMQTT']['topic_volume'], '{"Volume":%d,"High_Count":%d}' %(mic.volume, mic.high_volume_count))
         mqttc_loop()
 
@@ -75,23 +81,22 @@ def play_song(vol):
 
     song = player.play(vol=vol)
     if song is not None:
-        logging.info("barkback: playing=%s volume=%s" %(song, vol))
+        logger.info("playing=%s volume=%s" %(song, vol), {'msgid': 'play'})
         mqttc_publish(config['CloudMQTT']['topic_playing'], '{"Song":"%s","Vol":%s}' %(song, vol))
         player.join()
         mqttc_publish(config['CloudMQTT']['topic_playing'], "")
 
 def InitLogger():
-    logger = logging.getLogger()
     # Set console (stdout) logging level
     logger.handlers[0].setLevel(config['Logging']['level'])
 
     if config['syslog'].getboolean('enabled'):
         syslog = SysLogHandler(address=(config['syslog']['host'], config['syslog'].getint('port')), facility=SysLogHandler.LOG_USER, socktype=socket.SOCK_DGRAM)
-        syslog.setFormatter(RFC5424Formatter(appname='BarkBack'))
+        syslog.setFormatter(RFC5424Formatter())
         syslog.setLevel(config['syslog']['level'])
         logger.addHandler(syslog)
 
-    logging.info("barkback: starting")
+    logger.info("starting", {'msgid': 'info'})
 
 def InitMQTTC():
     global mqttc
@@ -115,7 +120,7 @@ def mqttc_publish(topic, data):
 
 # MQTTC message received on subscribed topic
 def on_message(mosq, obj, msg):
-    logging.debug("mqttc: topic=%s payload=%s" %(msg.topic, msg.payload))
+    logger.debug("mqttc: topic=%s payload=%s" %(msg.topic, msg.payload))
     if (msg.topic == config['CloudMQTT']['topic_play']):
         try:
            vol = int(msg.payload)
@@ -176,8 +181,8 @@ def ReadConfig():
     if os.path.isfile(config_file):
         config.read(config_file)
     else:
-        logging.error("Missing configuration file. Using defaults.")
-        logging.error("Creating default {}".format(config_file))
+        logger.error("Missing configuration file. Using defaults.")
+        logger.error("Creating default {}".format(config_file))
         with open(config_file, 'w') as configFile:
             config.write(configFile)
 
