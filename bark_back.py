@@ -65,8 +65,8 @@ def main():
     #    Poll MQTTC for subscribed topics
     while True:
         time.sleep(1)
-        logger.debug("volume_avg=%d volume_max=%d high_count=%d" %(mic.volume_avg, mic.volume_max, mic.high_volume_count), {'msgid': 'volume'})
-        mqttc_publish(config['CloudMQTT']['topic_volume'], '{"Average":%d,"Max":%d,"High_Count":%d}' %(mic.volume_avg, mic.volume_max, mic.high_volume_count))
+        logger.debug("volume_avg=%1.3f volume_max=%d high_count=%d" %(mic.volume_avg, mic.volume_max, mic.high_volume_count), {'msgid': 'volume'})
+        mqttc_publish(config['CloudMQTT']['topic_volume'], '{"Average":%1.3f,"Max":%d,"High_Count":%d}' %(mic.volume_avg, mic.volume_max, mic.high_volume_count))
         mqttc_loop()
 
 # This is triggered when barking is detected by mic monitor thread
