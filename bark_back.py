@@ -54,7 +54,7 @@ def main():
                   high_volume_max    = config['Monitor'].getint('high_volume_max'),
                   on_high_volume     = on_high_volume,
                   sample_time        = config['Monitor'].getfloat('sample_time'),
-                  sleep_time         = config['Monitor'].getfloat('sleep_time'))
+                  Hz                 = config['Monitor'].getint('hz'))
 
     global last_events
     last_events = deque([], len(player_volumes)-1)
@@ -65,8 +65,8 @@ def main():
     #    Poll MQTTC for subscribed topics
     while True:
         time.sleep(1)
-        logger.debug("volume=%d high_count=%d" %(mic.volume, mic.high_volume_count), {'msgid': 'volume'})
-        mqttc_publish(config['CloudMQTT']['topic_volume'], '{"Volume":%d,"High_Count":%d}' %(mic.volume, mic.high_volume_count))
+        logger.debug("volume_avg=%d volume_max=%d high_count=%d" %(mic.volume_avg, mic.volume_max, mic.high_volume_count), {'msgid': 'volume'})
+        mqttc_publish(config['CloudMQTT']['topic_volume'], '{"Average":%d,"Max":%d,"High_Count":%d}' %(mic.volume_avg, mic.volume_max, mic.high_volume_count))
         mqttc_loop()
 
 # This is triggered when barking is detected by mic monitor thread
@@ -155,7 +155,7 @@ def ReadConfig():
     high_volume_period=5
     high_volume_max=4
     sample_time=0.05
-    sleep_time=0.1
+    hz=10
 
     [Logging]
     level=INFO

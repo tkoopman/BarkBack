@@ -46,8 +46,8 @@ Max times high volume can be detected during the high_volume_period seconds befo
 ### sample_time=0.05
 Time in seconds that the mic is polled for to calculate the current amplitude (volume)
 
-### sleep_time=0.1
-Time in seconds to sleep between polling the mic's amplitude
+### hz=10
+Times per second to poll the mic's amplitude
 
 ## [Logging]
 ### level=INFO
